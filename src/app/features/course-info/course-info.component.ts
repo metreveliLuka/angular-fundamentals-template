@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { mockedAuthorsList } from '@app/shared/mocks/mocks';
 
 @Component({
   selector: 'app-course-info',
@@ -6,5 +7,20 @@ import { Component } from '@angular/core';
   styleUrls: ['./course-info.component.scss']
 })
 export class CourseInfoComponent {
-  // Use the names for the input `course`.
+  @Input() title: string = "";
+  @Input() description: string = "";
+  @Input() creationDate: Date = new Date();
+  @Input() duration: number = 0;
+  @Input() authors: string[] = [];
+  @Input() id: string = "";
+
+  @Input() backButtonText: string = "";
+  @Output() goBack = new EventEmitter<any>();
+
+  getList(): void{
+    this.goBack.emit();
+  }
+  getAuthorNames(): string[]{
+    return this.authors.map(id => mockedAuthorsList.filter(auth => auth.id == id)[0].name);
+  }
 }
