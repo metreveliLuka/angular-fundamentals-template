@@ -1,6 +1,5 @@
 import { Component, Input, TemplateRef } from '@angular/core';
 import { mockedCoursesList } from '@app/shared/mocks/mocks';
-import { CourseInfoComponent } from '../course-info/course-info.component';
 
 @Component({
   selector: 'app-courses',

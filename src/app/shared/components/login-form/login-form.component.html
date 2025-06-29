@@ -22,7 +22,7 @@
             <!--Use the name `password` for the form control.-->
             <input type="password" id="password" placeholder="Input text" [formControl]="password" required />
             <ng-container *ngIf="loginForm.submitted || password.touched">
-              <span *ngIf="passwordIsEmpty()" id="passwordErrorMessage" class="text-danger">Password is required.</span>
+              <span *ngIf="password.invalid" id="passwordErrorMessage" class="text-danger">Password is required.</span>
             </ng-container>
           </div>
         </div>
