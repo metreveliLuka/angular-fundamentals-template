@@ -13,7 +13,7 @@ export class AppComponent {
   infoTitle: string = "Your list is empty"
   infoText: string = "Please use 'Add New Course' button to add your first course";
   loginText: string = "Login";
-  isLoggedIn: boolean = true;
+  isLoggedIn: boolean = false;
   addCoursePage: boolean = false;
   showAddCoursePage() {
     if(this.isLoggedIn){

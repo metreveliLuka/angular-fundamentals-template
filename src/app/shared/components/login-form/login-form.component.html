@@ -7,10 +7,14 @@
           <div class="form__control">
             <label for="email">Email</label>
             <!--Use the name `email` for the form control.-->
-            <input type="text" id="email" placeholder="Input text" [formControl]="email" emailValidation required />
+            <input type="text" id="email" placeholder="Input text" [formControl]="email" emailValidator required />
             <ng-container *ngIf="loginForm.submitted || email.touched">
-              <span *ngIf="emailIsEmpty()" id="emailErrorMessage" class="text-danger">Email is required.</span>
-              <span id="emailErrorMessage" class="text-danger">Email is invalid.</span>
+              <div *ngIf="emailIsEmpty()">
+                <span id="emailErrorMessage" class="text-danger">Email is required.</span>
+              </div>
+              <div *ngIf="showEmailError()">
+                <span id="emailErrorMessage" class="text-danger">Email is invalid.</span>
+              </div>
             </ng-container>
           </div>
           <div class="form__control">

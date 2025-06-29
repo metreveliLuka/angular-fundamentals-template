@@ -11,12 +11,13 @@ import { AbstractControl, NG_VALIDATORS, ValidationErrors, Validator, ValidatorF
 })
 export class EmailValidatorDirective implements Validator {
     validate(control: AbstractControl): ValidationErrors | null {
-        return validateEmail(new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/))(control);
+        return validateEmail(new RegExp(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/))(control);
     }
 }
 export function validateEmail (regex: RegExp): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
-        const email = control.get("email")?.value;
-        return regex.test(email) ? null : { invalidEmail: { value: email } };
+        const email = control?.value;
+        const result = regex.test(email);
+        return result ? null : { invalidEmail: { value: email } };
     }
 }

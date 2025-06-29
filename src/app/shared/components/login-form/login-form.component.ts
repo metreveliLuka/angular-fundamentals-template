@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, NgForm } from '@angular/forms';
+import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-login-form',
@@ -10,8 +10,8 @@ export class LoginFormComponent {
   @ViewChild("loginForm") public loginForm!: NgForm;
   loginText: string = "Login";
   //Use the names `email` and `password` for form controls.
-  email: FormControl = new FormControl("");
-  password: FormControl = new FormControl("");
+  email: FormControl = new FormControl("", Validators.required);
+  password: FormControl = new FormControl("", Validators.required);
   login: boolean = true;
 
   register(): void{
