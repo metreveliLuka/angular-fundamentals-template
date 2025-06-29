@@ -13,8 +13,8 @@
                 </div>
               </ng-container>
             </div>
-            <div><b>Duration: </b><span class="course-card__duration">{{ duration }}</span></div>
-            <div><b>Created: </b><span class="course-card__date">{{ (creationDate.getDay() + 1) + '/' + (creationDate.getMonth() + 1) + '/' + creationDate.getFullYear() }}</span></div>
+            <div><b>Duration: </b><span class="course-card__duration">{{ duration | duration }}</span></div>
+            <div><b>Created: </b><span class="course-card__date">{{ creationDate | customDate }}</span></div>
         </div>
         <div class="course-card__info-actions">
             <app-button [buttonText]="showCourseButtonText" (click) = "clickOnShow()"></app-button>
