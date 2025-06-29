@@ -10,8 +10,8 @@ export class LoginFormComponent {
   @ViewChild("loginForm") public loginForm!: NgForm;
   loginText: string = "Login";
   //Use the names `email` and `password` for form controls.
-  email: FormControl = new FormControl("", Validators.required);
-  password: FormControl = new FormControl("", Validators.required);
+  email: FormControl = new FormControl("", [Validators.required]);
+  password: FormControl = new FormControl("", [Validators.required]);
   login: boolean = true;
 
   register(): void{
