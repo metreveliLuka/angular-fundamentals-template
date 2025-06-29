@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class CustomDatePipe implements PipeTransform{
     transform(date: Date): string {
-        return (date.getDay() + 1) + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+        return date.getDate().toString().padStart(2,'0') + '.' + (date.getMonth() + 1).toString().padStart(2,'0') + '.' + date.getFullYear();
     }
 
 }
