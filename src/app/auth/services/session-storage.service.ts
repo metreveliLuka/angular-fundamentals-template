@@ -1,7 +1,6 @@
 import {Inject, Injectable, InjectionToken} from '@angular/core';
 
-export const TOKEN = 'SESSION_TOKEN'; // Use this constant for the session storage entry key
-// Add your code here
+export const TOKEN = 'SESSION_TOKEN';
 
 export const WINDOW = new InjectionToken<Window>('Window');
 

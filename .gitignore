@@ -24,3 +24,5 @@ yarn-error.log*
 
 .idea/
 .angular/**/*
+cypress/**/*
+cypress.config.ts
