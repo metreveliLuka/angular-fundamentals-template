@@ -8,8 +8,8 @@
             <div>
               <b>Authors: </b>
               <ng-container *ngIf="authors">
-                <div *ngFor="let author of getAuthorsNames()">
-                    <div>{{ author }}</div>
+                <div *ngFor="let author of getAuthorsNames() | async">
+                    <div>{{ author.name }}</div>
                 </div>
               </ng-container>
             </div>
@@ -20,7 +20,7 @@
             <app-button [buttonText]="showCourseButtonText" (click) = "clickOnShow()"></app-button>
             <div class="course-card__buttons">
                 <ng-container *ngIf="editable">
-                    <app-button [buttonText]="editText" (click) = "clickOnEdit()"></app-button>
+                    <app-button [buttonText]="editText" (click) = "clickOnEdit()" ></app-button>
                     <app-button [buttonText]="removeText" (click) = "clickOnRemove()"></app-button>
                 </ng-container>
             </div>

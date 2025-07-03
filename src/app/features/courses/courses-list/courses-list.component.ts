@@ -1,28 +1,51 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CourseCardComponent } from '@app/shared/components';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { CoursesStoreService } from '@app/services/courses-store.service';
+import { GetCourseBody } from '@app/services/courses.service';
+import { UserStoreService } from '@app/user/services/user-store.service';
+import { filter, Subject, switchMap, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-courses-list',
   templateUrl: './courses-list.component.html',
   styleUrls: ['./courses-list.component.css']
 })
-export class CoursesListComponent {
-  @Input() courses: {id: string, title: string, description: string, creationDate: Date, duration: number, authors: string[]}[] = [];
-  @Input() editable: boolean = false;
+export class CoursesListComponent implements OnDestroy, OnInit {
+  constructor(private userStore: UserStoreService, private coursesService: CoursesStoreService, private router: Router) {}
 
-  @Output() showCourse = new EventEmitter<string>();
-  @Output() editCourse = new EventEmitter<string>();
-  @Output() deleteCourse = new EventEmitter<string>();
+  addCourseButtonText: string = "Add Course";
+  courses: GetCourseBody[] = [];
+  editable: boolean = false;
+  selectedCourse: GetCourseBody | null = null;
+  backButtonText: string = "Back";
+  destroy$ = new Subject<void>();
 
-  onShow(id: string) {
-    this.showCourse.emit(id);
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  onEdit(id: string) {
-    this.editCourse.emit(id);
+  ngOnInit() {
+    this.editable = this.userStore.isAdmin;
+    this.userStore.isAdmin$.subscribe(isAdmin => {
+      this.editable = isAdmin;
+    });
+    
+    this.courses = this.coursesService.courses;
+    this.coursesService.isLoading$.pipe(
+      filter(isLoading => !isLoading),
+      takeUntil(this.destroy$),
+    ).subscribe(() => {
+      this.courses = this.coursesService.courses;
+    })
   }
 
-  onDelete(id: string) {
-    this.deleteCourse.emit(id);
+  getDate(dateString: string): Date {
+    return new Date(dateString); 
+  }
+
+    
+  clickAddCourseButton() {
+    this.router.navigate(['courses', 'add']);
   }
 }

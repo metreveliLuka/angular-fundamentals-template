@@ -1,5 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { mockedAuthorsList } from '@app/shared/mocks/mocks';
+import { UserStoreService } from '@app/user/services/user-store.service';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { CoursesStoreService } from '@app/services/courses-store.service';
+import { GetAuthorBody, GetCourseBody } from '@app/services/courses.service';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-course-card',
@@ -7,47 +12,38 @@ import { mockedAuthorsList } from '@app/shared/mocks/mocks';
   styleUrls: ['./course-card.component.scss']
 })
 export class CourseCardComponent {
+  constructor(private userStore: UserStoreService, private router: Router, private coursesService: CoursesStoreService, private route: ActivatedRoute) {}
+
   @Input() id: string = "";
   @Input() title: string = "";
   @Input() description: string = "";
   @Input() creationDate: Date = new Date();
   @Input() duration: number = 0;
   @Input() authors: string[] = [];
-
-  getAuthorsNames(): string[]{
-    return this.authors.map(auth => mockedAuthorsList.filter((author) => author.id == auth)[0].name);
-  }
-  
   @Input() editable: boolean = false;
-  
-  @Output() showCourse = new EventEmitter<any>;
 
-  @Output() editCourse = new EventEmitter<any>;
-
-  @Output() removeCourse = new EventEmitter<any>;
-
-  clickOnShow(): void{
-    this.showCourse.emit(this.getCardInfo().id);
-  }
-
-  clickOnEdit(): void{
-    this.editCourse.emit(this.getCardInfo().id);
-  }
-
-  clickOnRemove(): void{
-    this.removeCourse.emit(this.getCardInfo().id);
-  }
   editText: string = "Edit";
   removeText: string = "Remove";
   showCourseButtonText: string = "Show course";
-  getCardInfo(): {id: string, title: string, description: string, creationDate: Date, duration: number, authors: string[]}{
-    return {
-      id: this.id,
-      title: this.title,
-      description: this.description,
-      creationDate: this.creationDate,
-      duration: this.duration,
-      authors: this.authors,
-    };
+
+  getAuthorsNames() {
+    return this.userStore.authors$.pipe(map(authors => authors.filter(this.isInAuthorsList.bind(this))));
+  }
+
+  clickOnShow(): void{
+    this.router.navigate([this.id], {relativeTo: this.route});
+  }
+
+  clickOnEdit(): void{
+    this.router.navigate(['courses','edit', this.id]);
+  }
+
+  clickOnRemove(): void{
+    this.coursesService.deleteCourse(this.id).subscribe();
+    this.router.navigate(['courses']);
+  }
+  
+  isInAuthorsList(author: GetAuthorBody): boolean {
+    return this.authors.filter(auth => auth === author.id).length > 0;
   }
 }

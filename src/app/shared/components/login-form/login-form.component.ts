@@ -1,5 +1,8 @@
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '@app/auth/services/auth.service';
+import { filter, take, tap } from 'rxjs';
 
 @Component({
   selector: 'app-login-form',
@@ -7,29 +10,30 @@ import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
   styleUrls: ['./login-form.component.scss'],
 })
 export class LoginFormComponent {
+  constructor(private authService: AuthService, private router: Router) {}
+
   @ViewChild("loginForm") public loginForm!: NgForm;
   loginText: string = "Login";
-  //Use the names `email` and `password` for form controls.
-  email: FormControl = new FormControl("", [Validators.required]);
-  password: FormControl = new FormControl("", [Validators.required]);
-  login: boolean = true;
+  
+  email: string = "";
+  password: string = "";
+
+  onSubmit(): void {
+    if(this.loginForm.valid){
+      this.authService
+      .login(this.loginForm.value)
+      .pipe(
+        filter(responseStatus => responseStatus),
+        take(1),
+      ).subscribe((result) => {
+        if(result){
+          this.router.navigate(['courses']);
+        }
+      });
+    }
+  }
 
   register(): void{
-    this.login = false;
-  }
-  showLogin(): void{
-    this.login = true;
-  }
-
-  emailIsEmpty(): boolean{
-    return this.email.value ? false : true;
-  }
-  
-  passwordIsEmpty(): boolean{
-    return this.password.value ? false : true;
-  }
-
-  showEmailError(): boolean{
-    return this.email.invalid ? true : false;
+    this.router.navigate(['registration']);
   }
 }

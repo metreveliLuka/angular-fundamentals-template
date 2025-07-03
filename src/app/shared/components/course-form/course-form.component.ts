@@ -1,32 +1,83 @@
-import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import {
+AbstractControl,
   FormArray,
   FormBuilder, FormControl, FormGroup,
   Validators
 } from '@angular/forms';
-import { mockedAuthorsList } from '@app/shared/mocks/mocks';
-import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
-import { fas } from '@fortawesome/free-solid-svg-icons';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CoursesStoreService } from '@app/services/courses-store.service';
+import { GetAuthorBody, GetCourseBody } from '@app/services/courses.service';
+import { UserStoreService } from '@app/user/services/user-store.service';
+import { filter, map, take } from 'rxjs';
 
 @Component({
   selector: 'app-course-form',
   templateUrl: './course-form.component.html',
   styleUrls: ['./course-form.component.scss'],
 })
-export class CourseFormComponent {
-  removeAuthor(i: number) {
-    const authorArray = this.getAuthors();
-    const authorName = this.authorGroup.get('name') as FormControl;
-    if(authorName){
-      const author = authorArray.controls[i] as FormControl;
-      authorArray.removeAt(i);
-      this.authors.push(author.value)
+export class CourseFormComponent implements OnInit {
+  constructor(
+    private fb: FormBuilder,
+    private userStore: UserStoreService,
+    private coursesStore: CoursesStoreService,
+    private route: ActivatedRoute,
+    private router: Router) {
+    this.buildForm();
+  }
+  
+  private init: boolean = false;
+  authors: GetAuthorBody[] = [];
+  availableAuthors: GetAuthorBody[] = [];
+  courseForm!: FormGroup;
+  submitButtonText = "Add Course";
+  backToCoursePageText = "Back";
+  createAuthorButtonText = "Create Author";
+  removeAuthorButtonText: string = "Remove Author";
+  addAuthorButtonText= "Add Author";
+  submitted: boolean = false;
+
+  ngOnInit(): void {
+    this.userStore.authors$.subscribe(authors => {
+      this.authors = authors;
+      if(!this.init){
+        this.availableAuthors = this.authors.slice();
+        this.init = true;
+      } else {
+        const lastAuthor = authors[authors.length - 1];
+        this.availableAuthors.push(lastAuthor);
+      }
+    });
+
+    this.id = this.route.snapshot.paramMap.get('id');
+    if(this.id){
+      this.initializeForm(this.id);
     }
   }
 
-  constructor(public fb: FormBuilder, public library: FaIconLibrary) {
-    library.addIconPacks(fas);
-    this.buildForm();
+  private id: string | null = null;
+  
+  initializeForm(id: string) {
+    this.coursesStore.courses$.pipe(
+      map(courses => courses.find(course => course.id === id)!))
+    .subscribe(course => {
+        this.courseForm.get('title')?.setValue(course.title);
+        this.courseForm.get('description')?.setValue(course.description);
+        this.getCourseAuthors(course)
+          .forEach(index => {
+            this.addAuthor(index);
+          })
+        this.courseForm.get('duration')?.setValue(course.duration);
+      }
+    );
+  }
+
+  getCourseAuthors(course: GetCourseBody): number[] {
+    const indexes = this.availableAuthors
+      .map((author, index) => { return {author: author, index: index} })
+      .filter(author=> course.authors.find(_author => _author === author.author.id))
+      .map(author => author.index);
+    return indexes;
   }
 
   get authorGroup() {
@@ -44,43 +95,41 @@ export class CourseFormComponent {
     });
   }
 
-  authors: {id: string, name: string}[] = mockedAuthorsList;
-  courseForm!: FormGroup;
-  submitButtonText = "Add Course";
-  backToCoursePageText = "Back";
-  createAuthorButtonText = "Create Author";
-  removeAuthorButtonText: string = "Remove Author";
-  addAuthorButtonText= "Add Author";
-  submitted: boolean = false;
-  
-  @Output() coursePage: EventEmitter<any> = new EventEmitter<any>();
-  
   showCoursePage(): void {
-    this.coursePage.emit();
+    this.router.navigate(['/courses']);
   }
 
   createAuthor(): void{
     const authorName = this.authorGroup.get('name') as FormControl;
     if(authorName && authorName!.valid && authorName.value.length > 0){
-      this.authors.push({id: CourseFormComponent.standardGuid(), name: authorName.value,})
+      this.coursesStore.createAuthor({name: authorName.value}).pipe(
+        take(1),
+        filter(resp => resp.successful),
+        map(resp => resp.result)
+      ).subscribe();
       authorName.reset();
     }
   }
-  static standardGuid(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-      const r: number = Math.random() * 16 | 0;
-      const v: number = c === 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-  }
 
   addAuthor(i: number): void{
-    const author = this.authors[i];
-    if(this.getAuthors().controls.filter((contr) => contr.value.id === author.id).length === 0)
+    const author = this.availableAuthors[i];
+    if(!this.getAuthors().controls.find((contr) => contr.value.id === author.id))
     {
-      this.authors.splice(i,1);
-      this.getAuthors().push(new FormControl(author));
+      this.availableAuthors.splice(i,1);
+      this.getAuthors().push(new FormControl(author.id));
     }
+  }
+
+  removeAuthor(i: number) {
+    const authorArray = this.getAuthors();
+    const author = authorArray.controls[i] as FormControl;
+    authorArray.removeAt(i);
+    this.availableAuthors.push(this.getAuthor(author.value)!);
+  }
+
+  getAuthor(id: string) {
+    const author = this.authors.find(author => author.id === id);
+    return author;
   }
 
   getAuthors(): FormArray {
@@ -89,10 +138,28 @@ export class CourseFormComponent {
   
   onSubmit(){
     this.submitted = true;
+    if(this.courseForm.invalid){
+      return;
+    }
+
+    if(this.id){
+      this.coursesStore.editCourse(this.id, this.courseForm.value).subscribe(resp => {
+        if(resp.successful){
+          this.router.navigate(['/courses', resp.result.id]);
+        }
+      });
+    } else {
+      this.coursesStore.createCourse(this.courseForm.value).subscribe(resp => {
+        if(resp.successful){
+          this.router.navigate(['/courses', resp.result.id]);
+        }
+      });
+    }
   }
   
   get duration(){
     return this.courseForm.get("duration") as FormControl;
   }
+
   // Use the names `title`, `description`, `author`, 'authors' (for authors list), `duration` for the form controls.
 }

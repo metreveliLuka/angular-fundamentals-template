@@ -1,13 +1,25 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { EmailValidator, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '@app/auth/services/auth.service';
 import { EmailValidatorDirective, validateEmail } from '@app/shared/directives/email.directive';
+import { filter, take } from 'rxjs';
 
 @Component({
   selector: 'app-registration-form',
   templateUrl: './registration-form.component.html',
   styleUrls: ['./registration-form.component.scss'],
 })
-export class RegistrationFormComponent{
+export class RegistrationFormComponent implements OnInit{  
+  constructor(private fb: FormBuilder, private router: Router, private authService: AuthService) {
+    this.buildForm();    
+  }
+  ngOnInit(): void {
+    this.registrationForm.valueChanges.subscribe(() => {
+      this.submitted = false;
+    });
+  }
+
   private readonly emailValidationRegex = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/);
   registrationButtonText: string = "Register";
   loginButtonText: string = "Login";
@@ -26,15 +38,20 @@ export class RegistrationFormComponent{
   get password(){
     return this.registrationForm.get("password")!;
   }
-  constructor(private fb: FormBuilder) {
-    this.buildForm();    
-  }
+
   showLogin() {
-    this.login.emit();
+    this.router.navigate(['login']);
   }
 
   onSubmit(){
     this.submitted = true;
+    this.authService.register(this.registrationForm.value)
+    .pipe(
+      filter(response => response.successful),
+      take(1),
+    ).subscribe(() => {
+      this.router.navigate(['courses']);
+    });
   }
 
   buildForm(): void {

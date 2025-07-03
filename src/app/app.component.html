@@ -1,27 +1,13 @@
 <app-header>
   <ng-container *ngIf="isLoggedIn">
-    <app-button [buttonText]="logOutButtonText" [iconName]="logOutIconName"></app-button>
+    <app-button [buttonText]="logOutButtonText" [iconName]="logOutIconName" (click)="logOut()"></app-button>
   </ng-container>
 </app-header>
-<app-search></app-search>
-<ng-container *ngIf="!isLoggedIn; else show_list">
-  <app-login-form></app-login-form>
+<ng-container *ngIf="isLoggedIn">
+  <app-search></app-search>
 </ng-container>
-<ng-template #show_list>
-  <div *ngIf="isLoggedIn">
-    <ng-container *ngIf="!addCoursePage; else add_course_page">
-      <app-info [text]="infoText" [title]="infoTitle">
-        <app-button [buttonText]="addCourseText" (click)="showAddCoursePage()"></app-button>
-      </app-info>
-      <app-courses></app-courses>
-    </ng-container>
-    <ng-template #add_course_page>
-      <app-course-form (coursePage)="showCoursePage()"></app-course-form>
-    </ng-template>
-  </div>
-</ng-template>
+<router-outlet></router-outlet>
 <div class="app-root">
-
   <!-- Modal component -->
   <!-- <app-modal [message]="'Message'" [title]="'Title'" [okButtonText]="'Ok'" [cancelButtonText]="'Cancel'"></app-modal> -->
 </div>

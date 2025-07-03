@@ -51,7 +51,7 @@
         </ng-container>
         <div>Authors List</div>
         <ul>
-          <li *ngFor="let author of authors; let i=index">
+          <li *ngFor="let author of availableAuthors; let i=index">
             {{ author.name }}
             <app-button [buttonText]="addAuthorButtonText" (click)="addAuthor(i)"></app-button>
           </li>
@@ -60,7 +60,7 @@
           <!--Use the name `authors` for the form array.-->
           <ul>
             <li *ngFor='let author of getAuthors().controls; let i=index'>
-              {{ author.value.name }}
+              {{ getAuthor(author.value)?.name }}
               <app-button [buttonText]="removeAuthorButtonText" (click)="removeAuthor(i)"></app-button>
             </li>
           </ul>
