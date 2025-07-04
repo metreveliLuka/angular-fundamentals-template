@@ -8,15 +8,11 @@ import { AuthService } from '../services/auth.service';
 })
 export class AuthorizedGuard implements CanLoad {
     constructor(private authService: AuthService, private router: Router) { }
-    canLoad(route: Route, segments: UrlSegment[]): Observable<boolean | UrlTree> {
-        return this.authService.isAuthorized$.pipe(
-            map(isAuthorized => {
-                if (isAuthorized) {
-                    return true;
-                } else {
-                    return this.router.createUrlTree(['login']);
-                }
-            })
-        )
+    canLoad(route: Route, segments: UrlSegment[]): boolean | UrlTree {
+        if (this.authService.isAuthorised) {
+            return true;
+        } else {
+            return this.router.createUrlTree(['login']);
+        }
     }
 }
