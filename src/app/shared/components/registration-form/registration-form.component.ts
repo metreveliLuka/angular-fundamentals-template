@@ -23,7 +23,7 @@ export class RegistrationFormComponent implements OnInit{
   private readonly emailValidationRegex = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/);
   registrationButtonText: string = "Register";
   loginButtonText: string = "Login";
-  registrationForm!: FormGroup;
+  registrationForm: FormGroup = new FormGroup({});
   submitted: boolean = false;
   @Output() login: EventEmitter<any> = new EventEmitter<any>();
 
@@ -61,5 +61,4 @@ export class RegistrationFormComponent implements OnInit{
       password: new FormControl("", [Validators.required]),
     });
   }
-  // Use the names `name`, `email`, `password` for the form controls.
 }
