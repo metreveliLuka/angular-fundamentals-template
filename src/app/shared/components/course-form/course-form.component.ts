@@ -8,7 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CoursesStoreService } from '@app/services/courses-store.service';
 import { GetAuthorBody, GetCourseBody } from '@app/services/courses.service';
 import { UserStoreService } from '@app/user/services/user-store.service';
-import { filter, map, take } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, take } from 'rxjs';
 
 @Component({
   selector: 'app-course-form',
@@ -45,6 +45,7 @@ export class CourseFormComponent implements OnInit {
       } else {
         const lastAuthor = authors[authors.length - 1];
         this.availableAuthors.push(lastAuthor);
+        this.authorsLoaded$$.next(true);
       }
     });
 
@@ -53,6 +54,8 @@ export class CourseFormComponent implements OnInit {
       this.initializeForm(this.id);
     }
   }
+
+  private authorsLoaded$$ = new BehaviorSubject<boolean>(false);
 
   private id: string | null = null;
   
@@ -95,12 +98,17 @@ export class CourseFormComponent implements OnInit {
 
   createAuthor(): void{
     if(this.authorName && this.authorName!.valid && this.authorName.value.length > 0){
-      this.coursesStore.createAuthor({name: this.authorName.value}).pipe(
+      const responseObservable = this.coursesStore.createAuthor({name: this.authorName.value}).pipe(
         take(1),
         filter(resp => resp.successful),
-        map(resp => resp.result)
-      ).subscribe();
-      this.authorName.reset();
+        map(resp => resp.result),  
+      )
+      combineLatest([responseObservable, this.authorsLoaded$$.pipe(filter(loaded => loaded))])
+      .subscribe(result => {
+        const index = this.availableAuthors.findIndex(author => author.id === result[0].id);
+        this.addAuthor(index);
+        this.authorName.reset();
+      });
     }
   }
   get authorName(){
