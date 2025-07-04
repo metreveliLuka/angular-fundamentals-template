@@ -1,4 +1,6 @@
-<app-button [buttonText]="addCourseButtonText" (click)="clickAddCourseButton()"></app-button>
+<ng-container *ngIf="editable">
+    <app-button [buttonText]="addCourseButtonText" (click)="clickAddCourseButton()"></app-button>
+</ng-container>
 <app-course-card
     *ngFor="let course of courses"
     [editable]="editable"

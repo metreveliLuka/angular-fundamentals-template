@@ -6,7 +6,6 @@ import { CoursesComponent } from './courses.component';
 import { CoursesListComponent } from './courses-list/courses-list.component';
 import { CourseInfoComponent } from '../course-info/course-info.component';
 import { RouterOutlet } from '@angular/router';
-import { WINDOW } from '@app/auth/services/session-storage.service';
 
 @NgModule({
   declarations: [CoursesComponent, CoursesListComponent, CourseInfoComponent],
@@ -16,6 +15,5 @@ import { WINDOW } from '@app/auth/services/session-storage.service';
     CoursesRoutingModule,
     RouterOutlet
   ],
-  providers: [{provide: WINDOW, useValue: window}]
 })
 export class CoursesModule { }

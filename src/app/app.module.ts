@@ -1,20 +1,16 @@
-import { NgModule } from '@angular/core';
+import { InjectionToken, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SharedModule } from '@shared/shared.module';
 import { AppComponent } from '@app/app.component';
-import { CourseInfoComponent } from '@features/course-info/course-info.component';
 import { NotAuthorizedGuard } from '@app/auth/guards/not-authorized.guard';
 import { AuthorizedGuard } from '@app/auth/guards/authorized.guard';
 import { CoursesStoreService } from '@app/services/courses-store.service';
 import { CoursesService } from '@app/services/courses.service';
-import { CoursesListComponent } from './features/courses/courses-list/courses-list.component';
-import { CoursesComponent } from './features/courses/courses.component';
 import { RouterModule } from '@angular/router';
 import { routes } from './app-routing.module';
 import { AuthModule } from './auth/auth.module';
 import { AdminGuard } from './user/guards/admin.guard';
-import { WINDOW } from './auth/services/session-storage.service';
 import { TokenInterceptor } from './auth/interceptors/token.interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
@@ -27,7 +23,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
     RouterModule.forRoot(routes),
     AuthModule,
   ],
-  providers: [AuthorizedGuard, NotAuthorizedGuard, CoursesService, CoursesStoreService, AdminGuard, {provide: WINDOW, useValue: window}, {
+  providers: [AuthorizedGuard, NotAuthorizedGuard, CoursesService, CoursesStoreService, AdminGuard, {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true

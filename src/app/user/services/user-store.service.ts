@@ -3,13 +3,14 @@ import { UserService } from './user.service';
 import { BehaviorSubject, filter, switchMap, tap } from 'rxjs';
 import { GetAuthorBody } from '@app/services/courses.service';
 import { CoursesStoreService } from '@app/services/courses-store.service';
+import { AuthService } from '@app/auth/services/auth.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserStoreService{
 
-    constructor(private userService: UserService, private courseStore: CoursesStoreService) {
+    constructor(private userService: UserService, private courseStore: CoursesStoreService, private authService: AuthService) {
         this.courseStore.getAllAuthors().subscribe(authors =>{
             this.authors = authors;
         });
@@ -23,7 +24,12 @@ export class UserStoreService{
             this.authors=authors;
         });
         this.getUser();
+
+        authService.isAuthorized$.subscribe(isAuthorized => {
+            this.getUser();
+        })
     }
+
     getUser() {
         return this.userService.getUser().pipe(tap(res => {
             this.isAdmin = res.role === "admin";

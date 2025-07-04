@@ -77,7 +77,7 @@ export class CourseFormComponent implements OnInit {
       .map((author, index) => { return {author: author, index: index} })
       .filter(author=> course.authors.find(_author => _author === author.author.id))
       .map(author => author.index);
-    return indexes;
+    return indexes.sort((a,b) => b - a);
   }
 
   get authorGroup() {

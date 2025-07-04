@@ -16,7 +16,6 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { DurationPipe } from './pipes/duration.pipe';
 import { CustomDatePipe } from './pipes/custom-date.pipe';
 import { EmailValidatorDirective } from '@shared/directives/email.directive';
-import { WINDOW } from '@app/auth/services/session-storage.service';
 
 const components = [
   HeaderComponent,
@@ -42,6 +41,5 @@ const components = [
     ReactiveFormsModule,
   ],
   exports: [components],
-  providers: [{ provide: WINDOW, useValue: window }]
 })
 export class SharedModule { }
