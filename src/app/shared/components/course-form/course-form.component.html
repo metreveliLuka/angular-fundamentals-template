@@ -36,16 +36,14 @@
       <div class="form__control">
         <div class="course__flex">
           <!--Use the name `author` for the form control.-->
-          <div [formGroup]="authorGroup">
-            <input type="text" id="author" placeholder="Input Author Name" formControlName="name"/>
-          </div>
+            <input type="text" id="author" placeholder="Input Author Name" formControlName="author"/>
           <app-button id="createAuthor" [buttonText]="createAuthorButtonText" (click)="createAuthor()"></app-button>
         </div>
-        <ng-container *ngIf="submitted ||  authorGroup.get('name')!.touched">
-          <div *ngIf="authorGroup.get('name')?.hasError('pattern')">
+        <ng-container *ngIf="submitted ||  authorName!.touched">
+          <div *ngIf="authorName.hasError('pattern')">
             <span id="authorErrorMessage">New author should contain only latin letters and numbers.</span>
           </div>
-          <div *ngIf="authorGroup.get('name')?.hasError('minLength')">
+          <div *ngIf="authorName.hasError('minlength')">
             <span id="authorErrorMessage">New author should contain at least 2 characters.</span>
           </div>
         </ng-container>

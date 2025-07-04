@@ -22,13 +22,13 @@ export class CourseFormComponent implements OnInit {
     private coursesStore: CoursesStoreService,
     private route: ActivatedRoute,
     private router: Router) {
-    this.courseForm = this.buildForm();
+    this.buildForm();
   }
   
   private init: boolean = false;
   authors: GetAuthorBody[] = [];
   availableAuthors: GetAuthorBody[] = [];
-  courseForm: FormGroup;
+  courseForm!: FormGroup;
   submitButtonText = "Add Course";
   backToCoursePageText = "Back";
   createAuthorButtonText = "Create Author";
@@ -79,18 +79,13 @@ export class CourseFormComponent implements OnInit {
     return indexes.sort((a,b) => b - a);
   }
 
-  get authorGroup() {
-    return this.courseForm.get('newAuthor') as FormGroup;
-  }
-
   buildForm() {
-    return this.fb.group({
+    this.courseForm = this.fb.group({
       title: new FormControl("", [Validators.minLength(2), Validators.required]),
       description: new FormControl("", [Validators.minLength(2), Validators.required]),
       authors: this.fb.array([], Validators.required),
       duration: new FormControl("", [Validators.required, Validators.min(0)]),
-      newAuthor: this.fb.group({
-        name: new FormControl("", [Validators.minLength(2), Validators.pattern(/^[a-zA-Z0-9]+$/)])}),
+      author: new FormControl("", [Validators.minLength(2), Validators.pattern(/^[a-zA-Z0-9]+$/)])
     });
   }
 
@@ -99,17 +94,18 @@ export class CourseFormComponent implements OnInit {
   }
 
   createAuthor(): void{
-    const authorName = this.authorGroup.get('name') as FormControl;
-    if(authorName && authorName!.valid && authorName.value.length > 0){
-      this.coursesStore.createAuthor({name: authorName.value}).pipe(
+    if(this.authorName && this.authorName!.valid && this.authorName.value.length > 0){
+      this.coursesStore.createAuthor({name: this.authorName.value}).pipe(
         take(1),
         filter(resp => resp.successful),
         map(resp => resp.result)
       ).subscribe();
-      authorName.reset();
+      this.authorName.reset();
     }
   }
-
+  get authorName(){
+    return this.courseForm.get('author') as FormControl;
+  } 
   addAuthor(i: number): void{
     const author = this.availableAuthors[i];
     if(!this.getAuthors().controls.find((contr) => contr.value.id === author.id))
