@@ -1,6 +1,5 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
-AbstractControl,
   FormArray,
   FormBuilder, FormControl, FormGroup,
   Validators
@@ -23,13 +22,13 @@ export class CourseFormComponent implements OnInit {
     private coursesStore: CoursesStoreService,
     private route: ActivatedRoute,
     private router: Router) {
-    this.buildForm();
+    this.courseForm = this.buildForm();
   }
   
   private init: boolean = false;
   authors: GetAuthorBody[] = [];
   availableAuthors: GetAuthorBody[] = [];
-  courseForm!: FormGroup;
+  courseForm: FormGroup;
   submitButtonText = "Add Course";
   backToCoursePageText = "Back";
   createAuthorButtonText = "Create Author";
@@ -84,8 +83,8 @@ export class CourseFormComponent implements OnInit {
     return this.courseForm.get('newAuthor') as FormGroup;
   }
 
-  buildForm(): void{
-    this.courseForm = this.fb.group({
+  buildForm() {
+    return this.fb.group({
       title: new FormControl("", [Validators.minLength(2), Validators.required]),
       description: new FormControl("", [Validators.minLength(2), Validators.required]),
       authors: this.fb.array([], Validators.required),
@@ -160,6 +159,4 @@ export class CourseFormComponent implements OnInit {
   get duration(){
     return this.courseForm.get("duration") as FormControl;
   }
-
-  // Use the names `title`, `description`, `author`, 'authors' (for authors list), `duration` for the form controls.
 }
