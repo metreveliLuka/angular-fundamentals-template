@@ -53,10 +53,15 @@ export const coursesReducer = createReducer(
         course: course,
         isSingleCourseLoading: false,
     })),
+    on(CourseActions.requestSingleCourseFail, (state, {error}) => ({
+        ...state,
+        isSingleCourseLoading: true,
+    })),
     on(CourseActions.requestFilteredCourses, (state, {title}) => ({
         ...state,
         id: title,
         isSearchState: true,
+        isAllCoursesLoading: true,
     })),
     on(CourseActions.requestFilteredCoursesSuccess, (state, {courses}) => ({
         ...state,
@@ -72,6 +77,7 @@ export const coursesReducer = createReducer(
         ...state,
         id: id,
         isAllCoursesLoading: true,
+        errorMessage: ""
     })),
     on(CourseActions.requestDeleteCourseSuccess, (state) => ({
         ...state,
@@ -86,7 +92,8 @@ export const coursesReducer = createReducer(
     on(CourseActions.requestEditCourse, (state, {id, course}) => ({
         ...state,
         id: id,
-        courseBody: course
+        courseBody: course,
+        errorMessage: "",
     })),
     on(CourseActions.requestEditCourseSuccess, (state, {course}) => ({
         ...state,
@@ -99,6 +106,7 @@ export const coursesReducer = createReducer(
     on(CourseActions.requestCreateCourse, (state, {course}) => ({
         ...state,
         courseBody: course,
+        errorMessage: "",
     })),
     on(CourseActions.requestCreateCourseSuccess, (state, {course}) => ({
         ...state,
