@@ -56,6 +56,7 @@ export const coursesReducer = createReducer(
     on(CourseActions.requestSingleCourseFail, (state, {error}) => ({
         ...state,
         isSingleCourseLoading: true,
+        errorMessage: error
     })),
     on(CourseActions.requestFilteredCourses, (state, {title}) => ({
         ...state,
