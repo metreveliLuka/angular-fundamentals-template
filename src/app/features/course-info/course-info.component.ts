@@ -34,7 +34,7 @@ export class CourseInfoComponent implements OnInit{
   }
 
   idIsInAuthors(author: GetAuthorBody, course: GetCourseBody): boolean {
-    const countInAuthors: number = course!.authors.filter(_author => _author === author.id).length;
+    const countInAuthors: number = course!.authors!.filter(_author => _author === author.id).length;
     return countInAuthors > 0;
   }
   

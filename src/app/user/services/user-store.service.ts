@@ -12,7 +12,7 @@ export class UserStoreService{
 
     constructor(private userService: UserService, private courseStore: CoursesStoreService, private authService: AuthService) {
         this.courseStore.getAllAuthors().subscribe(authors =>{
-            this.authors = authors;
+            this.authors = authors!;
         });
 
         this.courseStore.authorsLoading$
@@ -21,7 +21,7 @@ export class UserStoreService{
             switchMap(() => this.courseStore.getAllAuthors())
         )
         .subscribe(authors =>{
-            this.authors=authors;
+            this.authors=authors!;
         });
         this.getUser();
 

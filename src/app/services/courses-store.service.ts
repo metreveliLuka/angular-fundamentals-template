@@ -8,7 +8,7 @@ import { BehaviorSubject, map, tap } from 'rxjs';
 export class CoursesStoreService{
     constructor(private courseService: CoursesService) {
         this.getAll().pipe(tap(courses => {
-            this.courses$$.next(courses.result);
+            this.courses$$.next(courses.result!);
         })).subscribe();
     }
     private authorsLoading$$ = new BehaviorSubject<boolean>(false);
@@ -33,7 +33,7 @@ export class CoursesStoreService{
         this.isLoading$$.next(true);
         return this.courseService.getAll()
         .pipe(tap(result => {
-            this.courses$$.next(result.result);
+            this.courses$$.next(result.result!);
             this.isLoading$$.next(false);
         }));
     }
@@ -58,7 +58,7 @@ export class CoursesStoreService{
         this.isLoading$$.next(true);
         return this.courseService.filterCourses(value).pipe(
             tap(res => {
-            this.courses$$.next(res.result);
+            this.courses$$.next(res.result!);
             this.isLoading$$.next(false);
         }));
     }
