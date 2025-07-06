@@ -62,7 +62,7 @@ export class CourseFormComponent implements OnInit {
   initializeForm(id: string) {
     this.courseFacade.getAllCourses();
     this.courseFacade.allCourses$.pipe(
-      map(courses => courses.find(course => course.id === id)!))
+      map(courses => courses!.find(course => course.id === id)!))
     .subscribe(course => {
         this.courseForm.get('title')?.setValue(course.title);
         this.courseForm.get('description')?.setValue(course.description);
@@ -78,7 +78,7 @@ export class CourseFormComponent implements OnInit {
   getCourseAuthors(course: GetCourseBody): number[] {
     const indexes = this.availableAuthors
       .map((author, index) => { return {author: author, index: index} })
-      .filter(author=> course.authors.find(_author => _author === author.author.id))
+      .filter(author=> course.authors!.find(_author => _author === author.author.id))
       .map(author => author.index);
     return indexes.sort((a,b) => b - a);
   }
@@ -102,12 +102,12 @@ export class CourseFormComponent implements OnInit {
       const responseObservable = this.userStore.createAuthor({name: this.authorName.value})
       .pipe(
         take(1),
-        filter(resp => resp.successful),
+        filter(resp => resp.successful!),
         map(resp => resp.result),  
       )
       combineLatest([responseObservable, this.authorsLoaded$$.pipe(filter(loaded => loaded))])
       .subscribe(result => {
-        const index = this.availableAuthors.findIndex(author => author.id === result[0].id);
+        const index = this.availableAuthors.findIndex(author => author.id === result[0]!.id);
         this.addAuthor(index);
         this.authorName.reset();
       });

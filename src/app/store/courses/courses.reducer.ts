@@ -5,8 +5,8 @@ import { CourseBody, GetCourseBody } from '@app/services/courses.service';
 // Add your code here
 
 export interface CoursesState {
-    allCourses: GetCourseBody[];
-    course: GetCourseBody | undefined;
+    allCourses?: GetCourseBody[];
+    course?: GetCourseBody;
     isAllCoursesLoading: boolean;
     isSingleCourseLoading: boolean;
     isSearchState: boolean;
@@ -17,7 +17,6 @@ export interface CoursesState {
 
 export const initialState: CoursesState = {
     allCourses: [],
-    course: undefined,
     courseBody: undefined,
     id: undefined,
     isAllCoursesLoading: false,
@@ -76,7 +75,7 @@ export const coursesReducer = createReducer(
     })),
     on(CourseActions.requestDeleteCourseSuccess, (state) => ({
         ...state,
-        allCourses: state.allCourses.filter(course => course.id !== state.id),//?
+        allCourses: state.allCourses!.filter(course => course.id !== state.id),//?
         isAllCoursesLoading: false,
     })),
     on(CourseActions.requestDeleteCourseFail, (state, {error}) => ({

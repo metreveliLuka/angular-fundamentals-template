@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 export interface Response<T>{
-    successful: boolean;
-    result: T;
+    successful?: boolean;
+    result?: T;
     errors?: [];
 }
 
@@ -17,19 +17,19 @@ export interface GetAuthorBody{
 }
 
 export interface GetCourseBody {
-    id: string;
-    creationDate: string;
-    title: string;
-    description: string;
-    duration: number;
-    authors: string[];
+    id?: string;
+    creationDate?: string;
+    title?: string;
+    description?: string;
+    duration?: number;
+    authors?: string[];
 }
 
 export interface CourseBody {
-    title: string,
-    description: string,
-    duration: number,
-    authors: string[]
+    title?: string;
+    description?: string;
+    duration?: number;
+    authors?: string[];
 }
 
 @Injectable({

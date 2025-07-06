@@ -21,7 +21,7 @@ export class CoursesEffects {
             .pipe(
                 map(response => {
                     if (response.successful) {
-                        return CourseActions.requestAllCoursesSuccess({ courses: response.result });
+                        return CourseActions.requestAllCoursesSuccess({ courses: response.result! });
                     } else {
                         return CourseActions.requestAllCoursesFail({ error: response.result as unknown as string });
                     }
@@ -35,7 +35,7 @@ export class CoursesEffects {
         mergeMap(state => this.coursesFacade.allCourses$
             .pipe(take(1),
                 map(courses => {
-                    return CourseActions.requestFilteredCoursesSuccess({courses: courses.filter(course => course.title === state.title).slice()})
+                    return CourseActions.requestFilteredCoursesSuccess({courses: courses!.filter(course => course.title === state.title).slice()})
                 })
             )
         )
@@ -47,7 +47,7 @@ export class CoursesEffects {
             .pipe(
                 map(response => {
                     if(response.successful) {
-                        return CourseActions.requestSingleCourseSuccess({course: response.result});
+                        return CourseActions.requestSingleCourseSuccess({course: response.result!});
                     } else {
                         return CourseActions.requestSingleCourseFail({error: response.result as unknown as string})
                     }
@@ -77,7 +77,7 @@ export class CoursesEffects {
             .pipe(
                 map(response => {
                     if(response.successful) {
-                        return CourseActions.requestEditCourseSuccess({course: response.result});
+                        return CourseActions.requestEditCourseSuccess({course: response.result!});
                     } else {
                         return CourseActions.requestEditCourseFail({error: response.errors})
                     }
@@ -92,7 +92,7 @@ export class CoursesEffects {
             .pipe(
                 map(response => {
                     if(response.successful) {
-                        return CourseActions.requestCreateCourseSuccess({course: response.result});
+                        return CourseActions.requestCreateCourseSuccess({course: response.result!});
                     } else {
                         return CourseActions.requestCreateCourseFail({error: response.errors})
                     }
