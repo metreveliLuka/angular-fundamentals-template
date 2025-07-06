@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CoursesStoreService } from '@app/services/courses-store.service';
 import { GetAuthorBody, GetCourseBody } from '@app/services/courses.service';
 import { map } from 'rxjs';
+import { CoursesStateFacade } from '@app/store/courses/courses.facade';
 
 @Component({
   selector: 'app-course-card',
@@ -12,7 +13,7 @@ import { map } from 'rxjs';
   styleUrls: ['./course-card.component.scss']
 })
 export class CourseCardComponent {
-  constructor(private userStore: UserStoreService, private router: Router, private coursesService: CoursesStoreService, private route: ActivatedRoute) {}
+  constructor(private userStore: UserStoreService, private router: Router, private coursesFacade: CoursesStateFacade, private route: ActivatedRoute) {}
 
   @Input() id: string = "";
   @Input() title: string = "";
@@ -39,8 +40,7 @@ export class CourseCardComponent {
   }
 
   clickOnRemove(): void{
-    this.coursesService.deleteCourse(this.id).subscribe();
-    this.router.navigate(['courses']);
+    this.coursesFacade.deleteCourse(this.id);
   }
   
   isInAuthorsList(author: GetAuthorBody): boolean {

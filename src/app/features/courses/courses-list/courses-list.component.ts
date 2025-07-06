@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CoursesStoreService } from '@app/services/courses-store.service';
 import { GetCourseBody } from '@app/services/courses.service';
+import { CoursesStateFacade } from '@app/store/courses/courses.facade';
 import { UserStoreService } from '@app/user/services/user-store.service';
 import { filter, Subject, switchMap, takeUntil } from 'rxjs';
 
@@ -11,10 +12,11 @@ import { filter, Subject, switchMap, takeUntil } from 'rxjs';
   styleUrls: ['./courses-list.component.css']
 })
 export class CoursesListComponent implements OnDestroy, OnInit {
-  constructor(private userStore: UserStoreService, private coursesService: CoursesStoreService, private router: Router) {}
-
+  constructor(private userStore: UserStoreService, private coursesFacade: CoursesStateFacade, private router: Router) {}
+  
+  placeholderButtonText: string = "Input text";
   addCourseButtonText: string = "Add Course";
-  courses: GetCourseBody[] = [];
+  courses$ = this.coursesFacade.allCourses$;
   editable: boolean = false;
   selectedCourse: GetCourseBody | null = null;
   backButtonText: string = "Back";
@@ -31,21 +33,22 @@ export class CoursesListComponent implements OnDestroy, OnInit {
       this.editable = isAdmin;
     });
     
-    this.courses = this.coursesService.courses;
-    this.coursesService.isLoading$.pipe(
-      filter(isLoading => !isLoading),
-      takeUntil(this.destroy$),
-    ).subscribe(() => {
-      this.courses = this.coursesService.courses;
-    })
+    this.coursesFacade.getAllCourses();
   }
 
   getDate(dateString: string): Date {
     return new Date(dateString); 
   }
-
     
   clickAddCourseButton() {
     this.router.navigate(['courses', 'add']);
+  }
+
+  clickSearch(searchString: string | undefined) {
+    if(searchString){
+      this.coursesFacade.getFilteredCourses(searchString);
+    } else {
+      this.coursesFacade.getAllCourses();
+    }
   }
 }

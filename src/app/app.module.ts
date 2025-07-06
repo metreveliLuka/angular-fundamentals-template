@@ -13,6 +13,9 @@ import { AuthModule } from './auth/auth.module';
 import { AdminGuard } from './user/guards/admin.guard';
 import { TokenInterceptor } from './auth/interceptors/token.interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { StoreModule } from '@ngrx/store';
+import { effects, metaReducers, reducers } from './store';
+import { EffectsModule } from '@ngrx/effects';
 
 @NgModule({
   declarations: [AppComponent],
@@ -21,6 +24,8 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
     SharedModule,
     FontAwesomeModule,
     RouterModule.forRoot(routes),
+    StoreModule.forRoot(reducers, {metaReducers}),
+    EffectsModule.forRoot(effects),
     AuthModule,
   ],
   providers: [AuthorizedGuard, NotAuthorizedGuard, CoursesService, CoursesStoreService, AdminGuard, {

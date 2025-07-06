@@ -43,7 +43,7 @@ export class CoursesStoreService{
     }
 
     getCourse(id: string) {
-        return this.courseService.getCourse(id).pipe(map(resp => resp.result));
+        return this.courseService.getCourse(id);
     }
 
     editCourse(id: string, course: CourseBody) {

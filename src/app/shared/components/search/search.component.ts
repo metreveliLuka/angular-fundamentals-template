@@ -8,8 +8,6 @@ import { FormControl, Validators } from '@angular/forms';
 })
 export class SearchComponent {
   searchButtonText: string = "Search";
-  // Use the name `placeholder` for the @Input.
-  // Use the name `search` for the @Output.
   @Input() placeholder: string = "";
   @Output() search = new EventEmitter<any>();
   searchControl = new FormControl("", Validators.required);

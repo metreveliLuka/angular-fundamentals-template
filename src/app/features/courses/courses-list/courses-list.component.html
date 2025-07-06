@@ -1,8 +1,9 @@
+<app-search (search)="clickSearch($event)" [placeholder]="placeholderButtonText"></app-search>
 <ng-container *ngIf="editable">
     <app-button [buttonText]="addCourseButtonText" (click)="clickAddCourseButton()"></app-button>
 </ng-container>
 <app-course-card
-    *ngFor="let course of courses"
+    *ngFor="let course of (courses$ | async)"
     [editable]="editable"
     [authors]="course.authors"
     [id]="course.id"

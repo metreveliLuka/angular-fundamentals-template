@@ -37,6 +37,10 @@ export class UserStoreService{
         })).subscribe();
     }
 
+    createAuthor(author :{ name: string}){
+        return this.courseStore.createAuthor(author);
+    }
+
     get authors() {
         return this.authors$$.value;
     }

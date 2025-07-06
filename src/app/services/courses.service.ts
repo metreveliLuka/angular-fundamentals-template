@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 export interface Response<T>{
     successful: boolean;
     result: T;
+    errors?: [];
 }
 
 export interface CreateAuthorBody{
@@ -54,11 +55,11 @@ export class CoursesService {
     }
 
     deleteCourse(id: string) {
-        return this.client.delete(this.url + `courses/${id}`);
+        return this.client.delete<Response<string>>(this.url + `courses/${id}`);
     }
 
     filterCourses(value: string) {
-        return this.client.get<Response<GetCourseBody[]>>(this.url + `courses/filter${value}`);
+        return this.client.get<Response<GetCourseBody[]>>(this.url + `courses/filter?title=${value}`);
     }
 
     getAllAuthors() {

@@ -7,6 +7,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { CoursesStoreService } from '@app/services/courses-store.service';
 import { GetAuthorBody, GetCourseBody } from '@app/services/courses.service';
+import { CoursesStateFacade } from '@app/store/courses/courses.facade';
 import { UserStoreService } from '@app/user/services/user-store.service';
 import { BehaviorSubject, combineLatest, filter, map, take } from 'rxjs';
 
@@ -19,12 +20,11 @@ export class CourseFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private userStore: UserStoreService,
-    private coursesStore: CoursesStoreService,
+    private courseFacade: CoursesStateFacade,
     private route: ActivatedRoute,
     private router: Router) {
     this.buildForm();
   }
-  
   private init: boolean = false;
   authors: GetAuthorBody[] = [];
   availableAuthors: GetAuthorBody[] = [];
@@ -60,7 +60,8 @@ export class CourseFormComponent implements OnInit {
   private id: string | null = null;
   
   initializeForm(id: string) {
-    this.coursesStore.courses$.pipe(
+    this.courseFacade.getAllCourses();
+    this.courseFacade.allCourses$.pipe(
       map(courses => courses.find(course => course.id === id)!))
     .subscribe(course => {
         this.courseForm.get('title')?.setValue(course.title);
@@ -98,7 +99,8 @@ export class CourseFormComponent implements OnInit {
 
   createAuthor(): void{
     if(this.authorName && this.authorName!.valid && this.authorName.value.length > 0){
-      const responseObservable = this.coursesStore.createAuthor({name: this.authorName.value}).pipe(
+      const responseObservable = this.userStore.createAuthor({name: this.authorName.value})
+      .pipe(
         take(1),
         filter(resp => resp.successful),
         map(resp => resp.result),  
@@ -114,6 +116,7 @@ export class CourseFormComponent implements OnInit {
   get authorName(){
     return this.courseForm.get('author') as FormControl;
   } 
+
   addAuthor(i: number): void{
     const author = this.availableAuthors[i];
     if(!this.getAuthors().controls.find((contr) => contr.value.id === author.id))
@@ -146,17 +149,9 @@ export class CourseFormComponent implements OnInit {
     }
 
     if(this.id){
-      this.coursesStore.editCourse(this.id, this.courseForm.value).subscribe(resp => {
-        if(resp.successful){
-          this.router.navigate(['/courses', resp.result.id]);
-        }
-      });
+      this.courseFacade.editCourse(this.courseForm.value, this.id);
     } else {
-      this.coursesStore.createCourse(this.courseForm.value).subscribe(resp => {
-        if(resp.successful){
-          this.router.navigate(['/courses', resp.result.id]);
-        }
-      });
+      this.courseFacade.createCourse(this.courseForm.value);
     }
   }
   

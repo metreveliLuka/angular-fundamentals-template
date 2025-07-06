@@ -3,9 +3,6 @@
     <app-button [buttonText]="logOutButtonText" [iconName]="logOutIconName" (click)="logOut()"></app-button>
   </ng-container>
 </app-header>
-<ng-container *ngIf="isLoggedIn">
-  <app-search></app-search>
-</ng-container>
 <router-outlet></router-outlet>
 <div class="app-root">
   <!-- Modal component -->
